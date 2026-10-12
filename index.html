@@ -22,7 +22,8 @@ button.ghost{background:transparent;color:var(--sub);border:1px solid var(--line
 .dow{font-size:12px;color:var(--sub);padding:4px 0}
 .day{aspect-ratio:1/1;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:14px;cursor:pointer}
 .day.has{background:var(--accent2)}.day.today{outline:2px solid var(--text)}.day.sel{background:var(--accent);color:#fff}
-.day small{font-size:11px;line-height:1}.day.off{pointer-events:none}
+.day{line-height:1.15}.day small{font-size:11px;line-height:1}.day.off{pointer-events:none}
+.day i{font-style:normal;font-size:9.5px;color:var(--sub);line-height:1.1}.day i.n{color:var(--accent);font-weight:600}.day.sel i{color:#fff}
 .item{display:grid;grid-template-columns:40px 1fr 64px 30px;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
 .item:last-child{border-bottom:none}
 .emo{font-size:26px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:var(--accent2);border-radius:12px}
@@ -154,6 +155,13 @@ function lmap(y){
   }
   return LC[y]=mp;
 }
+// 這支瀏覽器的農曆資料是否可用（用 2026 農曆新年 = 2/17 驗證）
+const LOK=(()=>{try{const a=lmap(2026)["1-1"];return !!a&&a.getTime()==new Date(2026,1,17).getTime()}catch(e){return false}})();
+function lunarLabel(t){
+  const p=lf.formatToParts(t),m=p.find(x=>x.type=="month").value,d=+p.find(x=>x.type=="day").value;
+  if(d>1)return {t:dn(d),n:false};
+  return {t:(/\D/.test(m)?"閏":"")+LM[parseInt(m)-1]+"月",n:true};
+}
 function occ(it,y){
   if(it.lunar){const mp=lmap(y);return mp[it.lm+"-"+it.ld]||(it.ld==30&&mp[it.lm+"-29"])||null}
   return new Date(y,it.m,(it.m==1&&it.d==29&&!leap(y))?28:it.d);
@@ -200,7 +208,8 @@ function renderCal(){
     const hit=items.filter(it=>{if(it.y&&it.y>vy)return false;const o=occ(it,vy);return o&&o.getTime()==t});
     const e=document.createElement("div");
     e.className="day"+(hit.length?" has":"")+(t==today.getTime()?" today":"")+(selDate&&selDate.getTime()==t?" sel":"");
-    e.innerHTML=d+(hit.length?"<small>"+hit[0].emoji+(hit.length>1?"+":"")+"</small>":"");
+    let lab="";if(LOK){const l=lunarLabel(dt);lab='<i'+(l.n?' class="n"':'')+'>'+l.t+'</i>'}
+    e.innerHTML='<span>'+d+'</span>'+lab+(hit.length?"<small>"+hit[0].emoji+(hit.length>1?"+":"")+"</small>":"");
     e.onclick=()=>{selDate=dt;renderCal();$("selInfo").textContent=hit.map(h=>h.emoji+h.name).join("、")};
     g.appendChild(e);
   }
@@ -253,7 +262,7 @@ function buildEmos(){const w=$("emos");w.innerHTML="";EMOJIS.forEach(e=>{const b
 $("emoCustom").oninput=e=>{const v=e.target.value.trim();if(!v)return;emo=[...new Intl.Segmenter().segment(v)][0].segment;buildEmos()};
 function setShared(v){shared=v;$("vPriv").classList.toggle("on",!v);$("vShare").classList.toggle("on",v);$("grpPick").classList.toggle("hidden",!v)}
 function setKind(k){kind=k;$("kS").classList.toggle("on",k=="solar");$("kL").classList.toggle("on",k=="lunar");$("solarBox").classList.toggle("hidden",k!="solar");$("lunarBox").classList.toggle("hidden",k!="lunar")}
-$("kS").onclick=()=>setKind("solar");$("kL").onclick=()=>setKind("lunar");
+$("kS").onclick=()=>setKind("solar");$("kL").onclick=()=>{if(!LOK)alert("這個瀏覽器的農曆資料無法使用，請改用最新版 Safari 或 Chrome");setKind("lunar")};
 function openForm(it){
   editId=it?it.id:null;$("formTitle").textContent=it?"編輯紀念日":"新增紀念日";
   $("name").value=it?it.name:"";$("note").value=it?it.note||"":"";$("emoCustom").value="";
