@@ -5,17 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>紀念日日曆</title>
 <style>
-:root{--bg:#faf6f1;--card:#fff;--text:#2b2623;--sub:#8a7f77;--line:#eadfd5;--accent:#e0624d;--accent2:#fbe3dd;--friend:#4a8fe0;--friend2:#dfeafb}
-@media (prefers-color-scheme:dark){:root{--bg:#1c1917;--card:#292422;--text:#f3ece6;--sub:#a39891;--line:#3b3330;--accent:#ff7d68;--accent2:#4a2c27;--friend:#6aa9f5;--friend2:#233449}}
+:root{--bg:#faf6f1;--card:#fff;--text:#2b2623;--sub:#8a7f77;--line:#eadfd5;--accent:#e0624d;--accent2:#fbe3dd;--friend2:#dfeafb}
+@media (prefers-color-scheme:dark){:root{--bg:#1c1917;--card:#292422;--text:#f3ece6;--sub:#a39891;--line:#3b3330;--accent:#ff7d68;--accent2:#4a2c27;--friend2:#233449}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,"PingFang TC","Noto Sans TC",sans-serif;line-height:1.5;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,"PingFang TC","Noto Sans TC",sans-serif;line-height:1.5;padding:env(safe-area-inset-top) 0 90px}
 .wrap{max-width:560px;margin:0 auto;padding:16px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:14px}
 button{font:inherit;cursor:pointer;border:none;border-radius:10px;padding:8px 14px;background:var(--accent);color:#fff}
+button:disabled{opacity:.5;cursor:default}
 button.ghost{background:transparent;color:var(--sub);border:1px solid var(--line)}
-.top{display:flex;justify-content:space-between;align-items:center;margin:4px 0 14px;gap:8px}
+.top{display:flex;justify-content:space-between;align-items:center;margin:4px 0 14px}
 .top h1{font-size:20px;margin:0}
-.top img{width:30px;height:30px;border-radius:50%;vertical-align:middle}
 .nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .nav button{padding:4px 12px;font-size:18px}
 .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}
@@ -23,29 +23,35 @@ button.ghost{background:transparent;color:var(--sub);border:1px solid var(--line
 .day{aspect-ratio:1/1;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:14px;cursor:pointer}
 .day.has{background:var(--accent2)}.day.today{outline:2px solid var(--text)}.day.sel{background:var(--accent);color:#fff}
 .day small{font-size:11px;line-height:1}.day.off{pointer-events:none}
-.item{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.item{display:grid;grid-template-columns:40px 1fr 64px 30px;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
 .item:last-child{border-bottom:none}
-.emo{font-size:26px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:var(--accent2);border-radius:12px;flex:none}
+.emo{font-size:26px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:var(--accent2);border-radius:12px}
 .item.f .emo{background:var(--friend2)}
-.info{flex:1;min-width:0}.info b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.info span{font-size:12.5px;color:var(--sub)}
-.cd{text-align:right;flex:none}.cd b{font-size:20px;color:var(--accent);display:block;line-height:1.1}.cd span{font-size:11px;color:var(--sub)}
-.x{background:none;color:var(--sub);padding:4px 6px}
+.info{min-width:0}.info b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.info span{font-size:12.5px;color:var(--sub);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cd{text-align:right}.cd b{font-size:20px;color:var(--accent);display:block;line-height:1.1}.cd span{font-size:11px;color:var(--sub)}
+.x{background:none;color:var(--sub);padding:4px 0;width:30px;font-size:16px}
+.pager{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:13px;color:var(--sub)}
+.pager button{padding:4px 14px}
 label{display:block;font-size:13px;color:var(--sub);margin:10px 0 4px}
 input,select{width:100%;font:inherit;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text)}
 .row{display:flex;gap:8px}.row>*{flex:1}
-.emos{display:flex;flex-wrap:wrap;gap:6px}
-.emos button,.seg button{background:var(--bg);color:var(--text);border:2px solid transparent;padding:4px 8px;font-size:20px;border-radius:10px}
+.emos{display:flex;flex-wrap:wrap;gap:4px}
+.emos button,.seg button{background:var(--bg);color:var(--text);border:2px solid transparent;padding:3px 7px;font-size:20px;border-radius:10px}
 .seg button{font-size:14px;padding:8px}
 .emos button.on,.seg button.on{border-color:var(--accent)}
 .chips{display:flex;gap:6px;margin:6px 0}
 .chips button{padding:4px 12px;font-size:13px;background:transparent;color:var(--sub);border:1px solid var(--line)}
 .chips button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 .hint{font-size:12px;color:var(--sub);margin-top:6px}.empty{text-align:center;color:var(--sub);padding:18px 0}
-.hidden{display:none}
+.hidden{display:none!important}
 .login{text-align:center;padding:60px 10px}.login h1{font-size:28px}
-.g{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
+.login .warn{font-size:12.5px;color:var(--sub);margin-top:14px}
+.g{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
 .g code{background:var(--bg);padding:2px 8px;border-radius:6px;letter-spacing:1px}
+.g button{padding:2px 8px;font-size:12px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+.bar button{display:block;width:100%;max-width:528px;margin:0 auto;padding:12px;font-size:16px}
 </style>
 </head>
 <body>
@@ -54,28 +60,13 @@ input,select{width:100%;font:inherit;padding:9px 10px;border:1px solid var(--lin
     <h1>🎉 紀念日日曆</h1>
     <p style="color:var(--sub)">記錄紀念日，也能和朋友一起分享</p>
     <button id="loginBtn" style="padding:12px 24px;font-size:16px">用 Google 登入</button>
+    <p class="warn">登入即表示所有設定的紀念日會上傳雲端，請留意個人訊息。</p>
   </div>
 
   <div id="appView" class="hidden">
     <div class="top">
       <h1>🎉 紀念日</h1>
-      <div style="display:flex;gap:6px;align-items:center">
-        <button id="addBtn">＋ 新增</button>
-        <button class="ghost" id="grpBtn">👥</button>
-        <button class="ghost" id="outBtn" title="登出">⎋</button>
-      </div>
-    </div>
-
-    <div class="card hidden" id="form">
-      <b id="formTitle">新增紀念日</b>
-      <label>名稱</label><input id="name" maxlength="30" placeholder="例如：結婚紀念日">
-      <label>原始日期</label><input id="date" type="date">
-      <label>圖示</label><div class="emos" id="emos"></div>
-      <label>備註（選填）</label><input id="note" maxlength="60">
-      <label>誰可以看？</label>
-      <div class="seg row"><button id="vPriv" class="on">🔒 只有我</button><button id="vShare">👥 分享給朋友</button></div>
-      <div id="grpPick" class="hidden"><label>分享到哪個群組</label><select id="grpSel"></select></div>
-      <div class="row" style="margin-top:14px"><button class="ghost" id="cancel">取消</button><button id="save">儲存</button></div>
+      <div style="display:flex;gap:6px"><button class="ghost" id="grpBtn">👥 群組</button><button class="ghost" id="outBtn" title="登出">⎋</button></div>
     </div>
 
     <div class="card hidden" id="grpPanel">
@@ -99,14 +90,37 @@ input,select{width:100%;font:inherit;padding:9px 10px;border:1px solid var(--lin
         <button data-f="all" class="on">全部</button><button data-f="mine">我的</button><button data-f="friend">朋友的</button>
       </div>
       <div id="list"></div>
+      <div class="pager hidden" id="pager"><button class="ghost" id="pp">‹</button><span id="pn"></span><button class="ghost" id="pnx">›</button></div>
+    </div>
+
+    <div class="card hidden" id="form">
+      <b id="formTitle">新增紀念日</b>
+      <label>名稱</label><input id="name" maxlength="30" placeholder="例如：結婚紀念日">
+      <label>日期類型</label>
+      <div class="seg row"><button id="kS" class="on">國曆</button><button id="kL">農曆</button></div>
+      <div id="solarBox"><label>原始日期</label><input id="date" type="date"></div>
+      <div id="lunarBox" class="hidden">
+        <label>農曆月／日</label>
+        <div class="row"><select id="lmSel"></select><select id="ldSel"></select></div>
+        <label>起始西元年（選填，用來算第幾週年）</label><input id="lyear" type="number" inputmode="numeric" placeholder="例如 2020">
+      </div>
+      <label>圖示（點選，或用鍵盤輸入任何 emoji）</label>
+      <div class="emos" id="emos"></div>
+      <input id="emoCustom" placeholder="😀 輸入 emoji" style="margin-top:6px">
+      <label>備註（選填）</label><input id="note" maxlength="60">
+      <label>誰可以看？</label>
+      <div class="seg row"><button id="vPriv" class="on">🔒 只有我</button><button id="vShare">👥 分享給朋友</button></div>
+      <div id="grpPick" class="hidden"><label>分享到哪個群組</label><select id="grpSel"></select></div>
+      <div class="row" style="margin-top:14px"><button class="ghost" id="cancel">取消</button><button id="save">儲存</button></div>
     </div>
   </div>
 </div>
+<div class="bar hidden" id="bar"><button id="addBtn">＋ 新增紀念日</button></div>
 
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
 import {getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
-import {getFirestore,collection,doc,setDoc,addDoc,updateDoc,deleteDoc,getDoc,query,where,onSnapshot,arrayUnion} from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
+import {getFirestore,collection,doc,setDoc,addDoc,updateDoc,deleteDoc,getDoc,query,where,onSnapshot,arrayUnion,arrayRemove} from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
 
 const app=initializeApp({
   apiKey:"AIzaSyClzPGSCLokIv7y_3dj6XJ2Cst-XjxxnjY",
@@ -119,38 +133,59 @@ const app=initializeApp({
 const auth=getAuth(app),db=getFirestore(app);
 const $=id=>document.getElementById(id);
 const p2=n=>String(n).padStart(2,"0");
-const EMOJIS=["🎂","💍","❤️","🎓","👶","🐶","🏠","✈️","💼","⭐"];
+const EMOJIS=["🎂","💍","❤️","🎓","👶","🐶","🐱","🏠","✈️","💼","⭐","🎉","🎁","🌹","🥂","🏮","🧧","🌕","🎋","🎄","🇹🇼","🕯️","🌸","🍰"];
+const LM="正二三四五六七八九十冬臘",NUM="一二三四五六七八九十";
+const dn=d=>d<=10?"初"+NUM[d-1]:d<20?"十"+NUM[d-11]:d==20?"二十":d<30?"廿"+NUM[d-21]:"三十";
+const PER=4;
 const now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
-let user=null,myItems=new Map(),grpItems=new Map(),groups=[],unsubs=[],grpUnsubs=[];
-let editId=null,emo=EMOJIS[0],shared=false,filter="all",selDate=null,vy=today.getFullYear(),vm=today.getMonth();
+let user=null,priv=[],gi=new Map(),groups=[],unsubs=[],gun=[];
+let editId=null,emo=EMOJIS[0],shared=false,kind="solar",filter="all",page=0,selDate=null,vy=today.getFullYear(),vm=today.getMonth();
 
+// ---------- 日期計算（國曆＋農曆） ----------
 const leap=y=>(y%4==0&&y%100!=0)||y%400==0;
-const occ=(it,y)=>new Date(y,it.m,(it.m==1&&it.d==29&&!leap(y))?28:it.d);
-const next=it=>{let y=Math.max(today.getFullYear(),it.y),o=occ(it,y);if(o<today)o=occ(it,y+1);return o};
+const LC={},lf=new Intl.DateTimeFormat("en-u-ca-chinese",{month:"numeric",day:"numeric"});
+function lmap(y){
+  if(LC[y])return LC[y];
+  const mp={};
+  for(let t=new Date(y,0,1);t.getFullYear()==y;t.setDate(t.getDate()+1)){
+    const p=lf.formatToParts(t),m=p.find(x=>x.type=="month").value,d=+p.find(x=>x.type=="day").value;
+    if(/\D/.test(m))continue; // 略過閏月
+    mp[+m+"-"+d]=new Date(t);
+  }
+  return LC[y]=mp;
+}
+function occ(it,y){
+  if(it.lunar){const mp=lmap(y);return mp[it.lm+"-"+it.ld]||(it.ld==30&&mp[it.lm+"-29"])||null}
+  return new Date(y,it.m,(it.m==1&&it.d==29&&!leap(y))?28:it.d);
+}
+function next(it){
+  for(let y=Math.max(today.getFullYear(),it.y||0),k=0;k<3;k++,y++){const o=occ(it,y);if(o&&o>=today)return o}
+  return null;
+}
 const days=(a,b)=>Math.round((b-a)/864e5);
-const all=()=>{const m=new Map();grpItems.forEach(g=>g.forEach((v,k)=>m.set(k,v)));myItems.forEach((v,k)=>m.set(k,v));return [...m.values()]};
+const all=()=>[...priv,...[...gi.values()].flat()];
+const ref=it=>it.src?doc(db,"groups",it.src,"items",it.id):doc(db,"anniversaries",it.id);
+const colOf=g=>g?collection(db,"groups",g,"items"):collection(db,"anniversaries");
 const err=e=>{console.error(e);alert("發生錯誤："+(e.code||e.message))};
 
 // ---------- 登入 ----------
 $("loginBtn").onclick=()=>signInWithPopup(auth,new GoogleAuthProvider()).catch(err);
 $("outBtn").onclick=()=>signOut(auth);
 onAuthStateChanged(auth,u=>{
-  unsubs.forEach(f=>f());unsubs=[];grpUnsubs.forEach(f=>f());grpUnsubs=[];
-  myItems=new Map();grpItems=new Map();groups=[];user=u;
-  $("loginView").classList.toggle("hidden",!!u);$("appView").classList.toggle("hidden",!u);
+  unsubs.forEach(f=>f());unsubs=[];gun.forEach(f=>f());gun=[];
+  priv=[];gi=new Map();groups=[];user=u;
+  $("loginView").classList.toggle("hidden",!!u);$("appView").classList.toggle("hidden",!u);$("bar").classList.toggle("hidden",!u);
   if(!u)return;
   setDoc(doc(db,"users",u.uid),{name:u.displayName||"朋友",photo:u.photoURL||""}).catch(()=>{});
   unsubs.push(onSnapshot(query(collection(db,"anniversaries"),where("owner","==",u.uid)),s=>{
-    myItems=new Map(s.docs.map(d=>[d.id,{id:d.id,...d.data()}]));render()},err));
+    priv=s.docs.map(d=>({...d.data(),id:d.id,src:""}));render()},err));
   unsubs.push(onSnapshot(query(collection(db,"groups"),where("members","array-contains",u.uid)),s=>{
-    groups=s.docs.map(d=>({id:d.id,...d.data()}));watchGroups();renderGroups();render()},err));
+    groups=s.docs.map(d=>({...d.data(),id:d.id}));watchGroups();renderGroups();render()},err));
 });
 function watchGroups(){
-  grpUnsubs.forEach(f=>f());grpUnsubs=[];grpItems=new Map();
-  groups.forEach(g=>{
-    grpUnsubs.push(onSnapshot(query(collection(db,"anniversaries"),where("groupId","==",g.id),where("shared","==",true)),s=>{
-      grpItems.set(g.id,new Map(s.docs.map(d=>[d.id,{id:d.id,...d.data()}])));render()},err));
-  });
+  gun.forEach(f=>f());gun=[];gi=new Map();
+  groups.forEach(g=>gun.push(onSnapshot(collection(db,"groups",g.id,"items"),s=>{
+    gi.set(g.id,s.docs.map(d=>({...d.data(),id:d.id,src:g.id})));render()},e=>console.warn(e))));
 }
 
 // ---------- 月曆與清單 ----------
@@ -161,65 +196,92 @@ function renderCal(){
   for(let i=0;i<new Date(vy,vm,1).getDay();i++){const e=document.createElement("div");e.className="day off";g.appendChild(e)}
   const items=all();
   for(let d=1;d<=new Date(vy,vm+1,0).getDate();d++){
-    const dt=new Date(vy,vm,d);
-    const hit=items.filter(it=>it.y<=vy&&occ(it,vy).getTime()==dt.getTime());
+    const dt=new Date(vy,vm,d),t=dt.getTime();
+    const hit=items.filter(it=>{if(it.y&&it.y>vy)return false;const o=occ(it,vy);return o&&o.getTime()==t});
     const e=document.createElement("div");
-    e.className="day"+(hit.length?" has":"")+(dt.getTime()==today.getTime()?" today":"")+(selDate&&selDate.getTime()==dt.getTime()?" sel":"");
+    e.className="day"+(hit.length?" has":"")+(t==today.getTime()?" today":"")+(selDate&&selDate.getTime()==t?" sel":"");
     e.innerHTML=d+(hit.length?"<small>"+hit[0].emoji+(hit.length>1?"+":"")+"</small>":"");
-    e.onclick=()=>{selDate=dt;renderCal();$("selInfo").textContent=hit.map(h=>h.emoji+h.name+"（第"+(vy-h.y)+"年）").join("、")};
+    e.onclick=()=>{selDate=dt;renderCal();$("selInfo").textContent=hit.map(h=>h.emoji+h.name).join("、")};
     g.appendChild(e);
   }
 }
+function copyOf(it){return {owner:user.uid,ownerName:user.displayName||"朋友",name:it.name,emoji:it.emoji,note:it.note||"",lunar:!!it.lunar,y:it.y||0,m:it.m??0,d:it.d??1,lm:it.lm||0,ld:it.ld||0,from:it.id}}
 function renderList(){
   let items=all();
   if(filter=="mine")items=items.filter(i=>i.owner==user.uid);
   if(filter=="friend")items=items.filter(i=>i.owner!=user.uid);
-  const L=$("list");
-  if(!items.length){L.innerHTML='<div class="empty">還沒有紀念日</div>';return}
+  const arr=items.map(it=>({it,o:next(it)})).filter(x=>x.o).sort((a,b)=>a.o-b.o);
+  const L=$("list"),pages=Math.max(1,Math.ceil(arr.length/PER));
+  page=Math.min(page,pages-1);
+  $("pager").classList.toggle("hidden",pages<2);
+  $("pn").textContent="第 "+(page+1)+" / "+pages+" 頁";
+  $("pp").disabled=page==0;$("pnx").disabled=page>=pages-1;
+  if(!arr.length){L.innerHTML='<div class="empty">還沒有紀念日</div>';return}
   L.innerHTML="";
-  items.map(it=>({it,o:next(it)})).sort((a,b)=>a.o-b.o).forEach(({it,o})=>{
-    const dd=days(today,o),n=o.getFullYear()-it.y,mine=it.owner==user.uid;
+  arr.slice(page*PER,page*PER+PER).forEach(({it,o})=>{
+    const dd=days(today,o),n=it.y?o.getFullYear()-it.y:0,mine=it.owner==user.uid;
     const el=document.createElement("div");el.className="item"+(mine?"":" f");
-    el.innerHTML='<div class="emo">'+it.emoji+'</div><div class="info"><b></b><span></span></div><div class="cd"><b>'+(dd==0?"今天":dd)+'</b><span>'+(dd==0?"🎉":"天後")+'</span></div>'+(mine?'<button class="x">✕</button>':'');
+    el.innerHTML='<div class="emo"></div><div class="info"><b></b><span></span></div><div class="cd"><b>'+(dd==0?"今天":dd)+'</b><span>'+(dd==0?"🎉":"天後")+'</span></div><button class="x"></button>';
+    el.querySelector(".emo").textContent=it.emoji;
     el.querySelector("b").textContent=it.name;
-    const tag=mine?(it.shared?"👥 ":"🔒 "):"👤 "+(it.ownerName||"朋友")+" · ";
-    el.querySelector(".info span").textContent=tag+(n>0?"第"+n+"週年 · ":"")+(o.getMonth()+1)+"/"+o.getDate()+(it.note?" · "+it.note:"");
+    const tag=mine?(it.src?"👥 ":"🔒 "):"👤 "+(it.ownerName||"朋友")+" · ";
+    el.querySelector(".info span").textContent=tag+(n>0?"第"+n+"週年 · ":"")+(it.lunar?"農曆"+LM[it.lm-1]+"月"+dn(it.ld)+" · ":"")+(o.getMonth()+1)+"/"+o.getDate()+(it.note?" · "+it.note:"");
+    const x=el.querySelector(".x");
     if(mine){
+      x.textContent="✕";
       el.querySelector(".info").onclick=()=>openForm(it);
-      el.querySelector(".x").onclick=()=>{if(confirm("刪除「"+it.name+"」？"))deleteDoc(doc(db,"anniversaries",it.id)).catch(err)};
+      x.onclick=()=>{if(confirm("刪除「"+it.name+"」？"))deleteDoc(ref(it)).catch(err)};
+    }else{
+      const added=priv.some(p=>p.from==it.id);
+      x.textContent=added?"✓":"＋";x.title="加入我的";x.disabled=added;x.style.color="var(--accent)";
+      x.onclick=()=>addDoc(collection(db,"anniversaries"),copyOf(it)).then(()=>alert("已加入「我的」，之後退出群組也會保留")).catch(err);
     }
     L.appendChild(el);
   });
 }
 function render(){if(user){renderCal();renderList()}}
-$("chips").onclick=e=>{const f=e.target.dataset.f;if(!f)return;filter=f;[...$("chips").children].forEach(b=>b.classList.toggle("on",b.dataset.f==f));renderList()};
+$("chips").onclick=e=>{const f=e.target.dataset.f;if(!f)return;filter=f;page=0;[...$("chips").children].forEach(b=>b.classList.toggle("on",b.dataset.f==f));renderList()};
+$("pp").onclick=()=>{page--;renderList()};
+$("pnx").onclick=()=>{page++;renderList()};
 $("prev").onclick=()=>{if(--vm<0){vm=11;vy--}render()};
 $("next").onclick=()=>{if(++vm>11){vm=0;vy++}render()};
 
 // ---------- 新增／編輯 ----------
-function buildEmos(){const w=$("emos");w.innerHTML="";EMOJIS.forEach(e=>{const b=document.createElement("button");b.textContent=e;b.className=e==emo?"on":"";b.onclick=()=>{emo=e;buildEmos()};w.appendChild(b)})}
+$("lmSel").innerHTML=[...LM].map((c,i)=>'<option value="'+(i+1)+'">農曆'+c+'月</option>').join("");
+$("ldSel").innerHTML=Array.from({length:30},(_,i)=>'<option value="'+(i+1)+'">'+dn(i+1)+'</option>').join("");
+function buildEmos(){const w=$("emos");w.innerHTML="";EMOJIS.forEach(e=>{const b=document.createElement("button");b.textContent=e;b.className=e==emo?"on":"";b.onclick=()=>{emo=e;$("emoCustom").value="";buildEmos()};w.appendChild(b)})}
+$("emoCustom").oninput=e=>{const v=e.target.value.trim();if(!v)return;emo=[...new Intl.Segmenter().segment(v)][0].segment;buildEmos()};
 function setShared(v){shared=v;$("vPriv").classList.toggle("on",!v);$("vShare").classList.toggle("on",v);$("grpPick").classList.toggle("hidden",!v)}
+function setKind(k){kind=k;$("kS").classList.toggle("on",k=="solar");$("kL").classList.toggle("on",k=="lunar");$("solarBox").classList.toggle("hidden",k!="solar");$("lunarBox").classList.toggle("hidden",k!="lunar")}
+$("kS").onclick=()=>setKind("solar");$("kL").onclick=()=>setKind("lunar");
 function openForm(it){
   editId=it?it.id:null;$("formTitle").textContent=it?"編輯紀念日":"新增紀念日";
-  $("name").value=it?it.name:"";$("note").value=it?it.note||"":"";
-  $("date").value=it?it.y+"-"+p2(it.m+1)+"-"+p2(it.d):"";
+  $("name").value=it?it.name:"";$("note").value=it?it.note||"":"";$("emoCustom").value="";
+  setKind(it&&it.lunar?"lunar":"solar");
+  $("date").value=it&&!it.lunar?it.y+"-"+p2(it.m+1)+"-"+p2(it.d):"";
+  $("lmSel").value=it&&it.lunar?it.lm:1;$("ldSel").value=it&&it.lunar?it.ld:1;$("lyear").value=it&&it.lunar&&it.y?it.y:"";
   emo=it?it.emoji:EMOJIS[0];buildEmos();
   $("grpSel").innerHTML=groups.map(g=>'<option value="'+g.id+'">'+g.name.replace(/</g,"&lt;")+'</option>').join("");
-  if(it&&it.groupId)$("grpSel").value=it.groupId;
-  setShared(!!(it&&it.shared));
-  $("form").classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"});
+  if(it&&it.src)$("grpSel").value=it.src;
+  setShared(!!(it&&it.src));
+  $("form").classList.remove("hidden");$("form").scrollIntoView({behavior:"smooth",block:"center"});
 }
 $("addBtn").onclick=()=>openForm(null);
 $("cancel").onclick=()=>$("form").classList.add("hidden");
 $("vPriv").onclick=()=>setShared(false);
-$("vShare").onclick=()=>{if(!groups.length){alert("你還沒有朋友群組，請先到 👥 建立或加入群組");return}setShared(true)};
+$("vShare").onclick=()=>{if(!groups.length){alert("你還沒有朋友群組，請先到「👥 群組」建立或加入");return}setShared(true)};
 $("save").onclick=async()=>{
-  const name=$("name").value.trim(),v=$("date").value;
-  if(!name||!v){alert("請填寫名稱與日期");return}
-  const [y,m,d]=v.split("-").map(Number);
-  const rec={owner:user.uid,ownerName:user.displayName||"朋友",name,y,m:m-1,d,emoji:emo,note:$("note").value.trim(),shared,groupId:shared?$("grpSel").value:""};
+  const name=$("name").value.trim();
+  if(!name){alert("請填寫名稱");return}
+  const rec={owner:user.uid,ownerName:user.displayName||"朋友",name,emoji:emo,note:$("note").value.trim(),lunar:kind=="lunar"};
+  if(kind=="solar"){
+    const v=$("date").value;if(!v){alert("請選擇日期");return}
+    const [y,m,d]=v.split("-").map(Number);Object.assign(rec,{y,m:m-1,d,lm:0,ld:0});
+  }else Object.assign(rec,{y:+$("lyear").value||0,m:0,d:1,lm:+$("lmSel").value,ld:+$("ldSel").value});
+  const tgt=shared?$("grpSel").value:"",old=editId?all().find(x=>x.id==editId):null;
   try{
-    if(editId)await updateDoc(doc(db,"anniversaries",editId),rec);else await addDoc(collection(db,"anniversaries"),rec);
+    if(old&&old.src==tgt)await updateDoc(ref(old),rec);
+    else{if(old&&old.from)rec.from=old.from;await addDoc(colOf(tgt),rec);if(old)await deleteDoc(ref(old))}
     $("form").classList.add("hidden");
   }catch(e){err(e)}
 };
@@ -229,9 +291,13 @@ function renderGroups(){
   $("grpList").innerHTML=groups.length?"":'<div class="hint">還沒有群組</div>';
   groups.forEach(g=>{
     const el=document.createElement("div");el.className="g";
-    el.innerHTML='<span></span><span><code>'+g.id+'</code> <button class="ghost" style="padding:2px 8px;font-size:12px">複製</button></span>';
-    el.firstChild.textContent=g.name+"（"+g.members.length+" 人）";
-    el.querySelector("button").onclick=()=>{try{navigator.clipboard.writeText(g.id)}catch(e){}alert("邀請碼 "+g.id+" 已複製，傳給朋友吧！")};
+    el.innerHTML='<span class="gn"></span><span><code>'+g.id+'</code> <button class="ghost cp">複製</button> <button class="ghost lv">退出</button></span>';
+    el.querySelector(".gn").textContent=g.name+"（"+g.members.length+" 人）";
+    el.querySelector(".cp").onclick=()=>{try{navigator.clipboard.writeText(g.id)}catch(e){}alert("邀請碼 "+g.id+" 已複製，傳給朋友吧！")};
+    el.querySelector(".lv").onclick=async()=>{
+      if(!confirm("退出「"+g.name+"」？\n你將看不到這個群組的分享，已「加入我的」的紀念日會保留。"))return;
+      try{await updateDoc(doc(db,"groups",g.id),{members:arrayRemove(user.uid)})}catch(e){err(e)}
+    };
     $("grpList").appendChild(el);
   });
 }
@@ -246,6 +312,7 @@ $("joinGrp").onclick=async()=>{
   try{
     const s=await getDoc(doc(db,"groups",code));
     if(!s.exists()){alert("找不到這個邀請碼");return}
+    if(s.data().members.includes(user.uid)){alert("你已經在這個群組了");return}
     await updateDoc(doc(db,"groups",code),{members:arrayUnion(user.uid)});$("joinCode").value="";
   }catch(e){err(e)}
 };
