@@ -35,7 +35,7 @@ button.ghost{background:transparent;color:var(--sub);border:1px solid var(--line
 .pager{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:13px;color:var(--sub)}
 .pager button{padding:4px 14px}
 label{display:block;font-size:13px;color:var(--sub);margin:10px 0 4px}
-input,select{width:100%;font:inherit;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text)}
+input,select,textarea{width:100%;font:inherit;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text)}
 .row{display:flex;gap:8px}.row>*{flex:1}
 .emos{display:flex;flex-wrap:wrap;gap:4px}
 .emos button,.seg button{background:var(--bg);color:var(--text);border:2px solid transparent;padding:3px 7px;font-size:20px;border-radius:10px}
@@ -53,7 +53,7 @@ input,select{width:100%;font:inherit;padding:9px 10px;border:1px solid var(--lin
 .g code{background:var(--bg);padding:2px 8px;border-radius:6px;letter-spacing:1px}
 .g button{padding:2px 8px;font-size:12px}
 .bar{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
-.bar button{display:block;width:100%;max-width:528px;margin:0 auto;padding:12px;font-size:16px}
+.bi{display:flex;gap:8px;max-width:528px;margin:0 auto}.bar button{padding:12px;font-size:16px}#addBtn{flex:1}
 
 .help{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
 .help .in{max-width:560px;margin:0 auto;padding:16px 16px 40px}
@@ -97,8 +97,10 @@ input,select{width:100%;font:inherit;padding:9px 10px;border:1px solid var(--lin
       <div id="grpList"></div>
       <label>建立新群組</label>
       <div class="row"><input id="newGrp" maxlength="20" placeholder="群組名稱"><button id="mkGrp" style="flex:none">建立</button></div>
+      <label style="display:flex;gap:8px;align-items:center;color:var(--text)"><input type="checkbox" id="pubChk" style="width:auto"> 建立成公開群組（登入的人都能加入，只有我能新增紀念日）</label>
       <label>用邀請碼加入</label>
       <div class="row"><input id="joinCode" maxlength="8" placeholder="8 碼邀請碼"><button id="joinGrp" style="flex:none">加入</button></div>
+      <label>公開群組（不用邀請碼，按加入就好）</label><div id="pubList"></div>
     </div>
 
     <div class="card">
@@ -121,7 +123,11 @@ input,select{width:100%;font:inherit;padding:9px 10px;border:1px solid var(--lin
       <label>名稱</label><input id="name" maxlength="30" placeholder="例如：結婚紀念日">
       <label>日期類型</label>
       <div class="seg row"><button id="kS" class="on">國曆</button><button id="kL">農曆</button></div>
-      <div id="solarBox"><label>原始日期</label><input id="date" type="date"></div>
+      <div id="solarBox">
+        <label>國曆月／日</label>
+        <div class="row"><select id="smSel"></select><select id="sdSel"></select></div>
+        <label>西元年（選填，填了才會顯示第幾週年）</label><input id="syear" type="number" inputmode="numeric" placeholder="例如 2020">
+      </div>
       <div id="lunarBox" class="hidden">
         <label>農曆月／日</label>
         <div class="row"><select id="lmSel"></select><select id="ldSel"></select></div>
@@ -135,6 +141,15 @@ input,select{width:100%;font:inherit;padding:9px 10px;border:1px solid var(--lin
       <div class="seg row"><button id="vPriv" class="on">🔒 只有我</button><button id="vShare">👥 分享給朋友</button></div>
       <div id="grpPick" class="hidden"><label>分享到哪個群組</label><select id="grpSel"></select></div>
       <div class="row" style="margin-top:14px"><button class="ghost" id="cancel">取消</button><button id="save">儲存</button></div>
+    </div>
+
+    <div class="card hidden" id="bulk">
+      <b>批次新增</b>
+      <div class="hint">一行一個：日期　圖示（選填）　名稱。年份可省略；農曆在最前面加「農曆」；備註用「｜」接在名稱後面。</div>
+      <textarea id="bulkTxt" rows="8" style="margin-top:8px" placeholder="1/14 ❤️ 日記情人節&#10;2/14 西洋情人節&#10;農曆 7/7 七夕｜牛郎織女&#10;2020/5/20 💍 結婚紀念日"></textarea>
+      <label>沒寫圖示時使用</label><select id="bulkEmo"></select>
+      <label>誰可以看？</label><select id="bulkTo"></select>
+      <div class="row" style="margin-top:14px"><button class="ghost" id="bulkCancel">取消</button><button id="bulkGo">匯入</button></div>
     </div>
   </div>
 </div>
@@ -162,12 +177,12 @@ input,select{width:100%;font:inherit;padding:9px 10px;border:1px solid var(--lin
     <p style="font-size:13.5px;color:var(--sub);margin:6px 0 0">• 所有紀念日會上傳雲端，請留意個人訊息。<br>• 「🔒 只有我」的紀念日只有你自己看得到。<br>• 邀請碼知道的人都能加入群組，請只分享給信任的朋友。<br>• 農曆閏月只算本月，不算閏月。<br>• 農曆日期由瀏覽器內建資料計算，請用較新版的 Safari 或 Chrome。</p>
   </div>
 </div></div>
-<div class="bar hidden" id="bar"><button id="addBtn">＋ 新增紀念日</button></div>
+<div class="bar hidden" id="bar"><div class="bi"><button id="addBtn">＋ 新增紀念日</button><button class="ghost" id="bulkBtn">📋 批次</button></div></div>
 
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
 import {getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut,createUserWithEmailAndPassword,signInWithEmailAndPassword,updateProfile} from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
-import {getFirestore,collection,doc,setDoc,addDoc,updateDoc,deleteDoc,getDoc,query,where,onSnapshot,arrayUnion,arrayRemove} from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
+import {getFirestore,collection,doc,setDoc,addDoc,updateDoc,deleteDoc,getDoc,query,where,onSnapshot,arrayUnion,arrayRemove,writeBatch} from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
 
 const app=initializeApp({
   apiKey:"AIzaSyClzPGSCLokIv7y_3dj6XJ2Cst-XjxxnjY",
@@ -185,7 +200,7 @@ const LM="正二三四五六七八九十冬臘",NUM="一二三四五六七八九
 const dn=d=>d<=10?"初"+NUM[d-1]:d<20?"十"+NUM[d-11]:d==20?"二十":d<30?"廿"+NUM[d-21]:"三十";
 const PER=4;
 const now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
-let user=null,priv=[],gi=new Map(),groups=[],unsubs=[],gun=[];
+let user=null,priv=[],gi=new Map(),groups=[],pubs=[],unsubs=[],gun=[];
 let editId=null,emo=EMOJIS[0],shared=false,kind="solar",filter="all",page=0,selDate=null,vy=today.getFullYear(),vm=today.getMonth();
 
 // ---------- 日期計算（國曆＋農曆） ----------
@@ -236,7 +251,7 @@ $("nickReg").onclick=async()=>{const v=nickVals();if(!v)return;try{const c=await
 $("nickLogin").onclick=async()=>{const v=nickVals();if(!v)return;try{await signInWithEmailAndPassword(auth,await nickEmail(v.n),v.p)}catch(e){nickErr(e)}};
 onAuthStateChanged(auth,u=>{
   unsubs.forEach(f=>f());unsubs=[];gun.forEach(f=>f());gun=[];
-  priv=[];gi=new Map();groups=[];user=u;
+  priv=[];gi=new Map();groups=[];pubs=[];user=u;
   $("loginView").classList.toggle("hidden",!!u);$("appView").classList.toggle("hidden",!u);$("bar").classList.toggle("hidden",!u);
   if(!u)return;
   setDoc(doc(db,"users",u.uid),{name:u.displayName||"朋友",photo:u.photoURL||""}).catch(()=>{});
@@ -244,6 +259,8 @@ onAuthStateChanged(auth,u=>{
     priv=s.docs.map(d=>({...d.data(),id:d.id,src:""}));render()},err));
   unsubs.push(onSnapshot(query(collection(db,"groups"),where("members","array-contains",u.uid)),s=>{
     groups=s.docs.map(d=>({...d.data(),id:d.id}));watchGroups();renderGroups();render()},err));
+  unsubs.push(onSnapshot(query(collection(db,"groups"),where("public","==",true)),s=>{
+    pubs=s.docs.map(d=>({...d.data(),id:d.id}));renderGroups()},e=>console.warn(e)));
 });
 function watchGroups(){
   gun.forEach(f=>f());gun=[];gi=new Map();
@@ -311,10 +328,13 @@ $("prev").onclick=()=>{if(--vm<0){vm=11;vy--}render()};
 $("next").onclick=()=>{if(++vm>11){vm=0;vy++}render()};
 
 // ---------- 新增／編輯 ----------
+$("smSel").innerHTML=Array.from({length:12},(_,i)=>'<option value="'+(i+1)+'">'+(i+1)+' 月</option>').join("");
+$("sdSel").innerHTML=Array.from({length:31},(_,i)=>'<option value="'+(i+1)+'">'+(i+1)+' 日</option>').join("");
 $("lmSel").innerHTML=[...LM].map((c,i)=>'<option value="'+(i+1)+'">農曆'+c+'月</option>').join("");
 $("ldSel").innerHTML=Array.from({length:30},(_,i)=>'<option value="'+(i+1)+'">'+dn(i+1)+'</option>').join("");
 function buildEmos(){const w=$("emos");w.innerHTML="";EMOJIS.forEach(e=>{const b=document.createElement("button");b.textContent=e;b.className=e==emo?"on":"";b.onclick=()=>{emo=e;$("emoCustom").value="";buildEmos()};w.appendChild(b)})}
 $("emoCustom").oninput=e=>{const v=e.target.value.trim();if(!v)return;emo=[...new Intl.Segmenter().segment(v)][0].segment;buildEmos()};
+const postable=()=>groups.filter(g=>!g.public||g.owner==user.uid);
 function setShared(v){shared=v;$("vPriv").classList.toggle("on",!v);$("vShare").classList.toggle("on",v);$("grpPick").classList.toggle("hidden",!v)}
 function setKind(k){kind=k;$("kS").classList.toggle("on",k=="solar");$("kL").classList.toggle("on",k=="lunar");$("solarBox").classList.toggle("hidden",k!="solar");$("lunarBox").classList.toggle("hidden",k!="lunar")}
 $("kS").onclick=()=>setKind("solar");$("kL").onclick=()=>{if(!LOK)alert("這個瀏覽器的農曆資料無法使用，請改用最新版 Safari 或 Chrome");setKind("lunar")};
@@ -322,10 +342,10 @@ function openForm(it){
   editId=it?it.id:null;$("formTitle").textContent=it?"編輯紀念日":"新增紀念日";
   $("name").value=it?it.name:"";$("note").value=it?it.note||"":"";$("emoCustom").value="";
   setKind(it&&it.lunar?"lunar":"solar");
-  $("date").value=it&&!it.lunar?it.y+"-"+p2(it.m+1)+"-"+p2(it.d):"";
+  $("smSel").value=it&&!it.lunar?it.m+1:1;$("sdSel").value=it&&!it.lunar?it.d:1;$("syear").value=it&&!it.lunar&&it.y?it.y:"";
   $("lmSel").value=it&&it.lunar?it.lm:1;$("ldSel").value=it&&it.lunar?it.ld:1;$("lyear").value=it&&it.lunar&&it.y?it.y:"";
   emo=it?it.emoji:EMOJIS[0];buildEmos();
-  $("grpSel").innerHTML=groups.map(g=>'<option value="'+g.id+'">'+g.name.replace(/</g,"&lt;")+'</option>').join("");
+  $("grpSel").innerHTML=postable().map(g=>'<option value="'+g.id+'">'+g.name.replace(/</g,"&lt;")+'</option>').join("");
   if(it&&it.src)$("grpSel").value=it.src;
   setShared(!!(it&&it.src));
   $("form").classList.remove("hidden");$("form").scrollIntoView({behavior:"smooth",block:"center"});
@@ -333,14 +353,15 @@ function openForm(it){
 $("addBtn").onclick=()=>openForm(null);
 $("cancel").onclick=()=>$("form").classList.add("hidden");
 $("vPriv").onclick=()=>setShared(false);
-$("vShare").onclick=()=>{if(!groups.length){alert("你還沒有朋友群組，請先到「👥 群組」建立或加入");return}setShared(true)};
+$("vShare").onclick=()=>{if(!postable().length){alert("你還沒有可以分享的群組，請先到「👥 群組」建立或加入");return}setShared(true)};
 $("save").onclick=async()=>{
   const name=$("name").value.trim();
   if(!name){alert("請填寫名稱");return}
   const rec={owner:user.uid,ownerName:user.displayName||"朋友",name,emoji:emo,note:$("note").value.trim(),lunar:kind=="lunar"};
   if(kind=="solar"){
-    const v=$("date").value;if(!v){alert("請選擇日期");return}
-    const [y,m,d]=v.split("-").map(Number);Object.assign(rec,{y,m:m-1,d,lm:0,ld:0});
+    const m=+$("smSel").value,d=+$("sdSel").value;
+    if(new Date(2000,m-1,d).getMonth()!=m-1){alert("這個月沒有這一天");return}
+    Object.assign(rec,{y:+$("syear").value||0,m:m-1,d,lm:0,ld:0});
   }else Object.assign(rec,{y:+$("lyear").value||0,m:0,d:1,lm:+$("lmSel").value,ld:+$("ldSel").value});
   const tgt=shared?$("grpSel").value:"",old=editId?all().find(x=>x.id==editId):null;
   try{
@@ -356,7 +377,7 @@ function renderGroups(){
   groups.forEach(g=>{
     const el=document.createElement("div");el.className="g";
     el.innerHTML='<span class="gn"></span><span><code>'+g.id+'</code> <button class="ghost cp">複製</button> <button class="ghost lv">退出</button></span>';
-    el.querySelector(".gn").textContent=g.name+"（"+g.members.length+" 人）";
+    el.querySelector(".gn").textContent=(g.public?"🌐 ":"")+g.name+"（"+g.members.length+" 人）";
     el.querySelector(".cp").onclick=()=>{try{navigator.clipboard.writeText(g.id)}catch(e){}alert("邀請碼 "+g.id+" 已複製，傳給朋友吧！")};
     el.querySelector(".lv").onclick=async()=>{
       if(!confirm("退出「"+g.name+"」？\n你將看不到這個群組的分享，已「加入我的」的紀念日會保留。"))return;
@@ -364,12 +385,22 @@ function renderGroups(){
     };
     $("grpList").appendChild(el);
   });
+  const P=$("pubList");P.innerHTML="";
+  const open=pubs.filter(p=>!groups.some(g=>g.id==p.id));
+  if(!open.length)P.innerHTML='<div class="hint">目前沒有可加入的公開群組</div>';
+  open.forEach(p=>{
+    const el=document.createElement("div");el.className="g";
+    el.innerHTML='<span></span><button>加入</button>';
+    el.firstChild.textContent="🌐 "+p.name+"（"+p.members.length+" 人）";
+    el.querySelector("button").onclick=()=>updateDoc(doc(db,"groups",p.id),{members:arrayUnion(user.uid)}).catch(err);
+    P.appendChild(el);
+  });
 }
 $("grpBtn").onclick=()=>$("grpPanel").classList.toggle("hidden");
 $("mkGrp").onclick=async()=>{
   const name=$("newGrp").value.trim();if(!name)return;
   const code=Array.from(crypto.getRandomValues(new Uint8Array(8)),b=>"ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[b%32]).join("");
-  try{await setDoc(doc(db,"groups",code),{name,owner:user.uid,members:[user.uid]});$("newGrp").value=""}catch(e){err(e)}
+  try{await setDoc(doc(db,"groups",code),{name,owner:user.uid,members:[user.uid],public:$("pubChk").checked});$("newGrp").value="";$("pubChk").checked=false}catch(e){err(e)}
 };
 $("joinGrp").onclick=async()=>{
   const code=$("joinCode").value.trim().toUpperCase();if(!code)return;
@@ -382,6 +413,40 @@ $("joinGrp").onclick=async()=>{
 };
 document.querySelectorAll(".helpOpen").forEach(b=>b.onclick=()=>{$("help").classList.remove("hidden");$("help").scrollTop=0});
 $("helpClose").onclick=()=>$("help").classList.add("hidden");
+
+// ---------- 批次新增 ----------
+$("bulkEmo").innerHTML=EMOJIS.map(e=>"<option>"+e+"</option>").join("");
+$("bulkBtn").onclick=()=>{
+  $("bulkTo").innerHTML='<option value="">🔒 只有我</option>'+postable().map(g=>'<option value="'+g.id+'">👥 '+g.name.replace(/</g,"&lt;")+'</option>').join("");
+  $("bulk").classList.remove("hidden");$("bulk").scrollIntoView({behavior:"smooth",block:"center"});
+};
+$("bulkCancel").onclick=()=>$("bulk").classList.add("hidden");
+function parseBulk(txt){
+  const ok=[],bad=[],seg=new Intl.Segmenter();
+  txt.split("\n").map(l=>l.trim()).filter(Boolean).slice(0,200).forEach(l=>{
+    let s=l,lunar=false;
+    if(/^農曆?/.test(s)){lunar=true;s=s.replace(/^農曆?\s*/,"")}
+    const m=s.match(/^(?:(\d{4})\s*[\/\-.年]\s*)?(\d{1,2})\s*[\/\-.月]\s*(\d{1,2})\s*日?\s*(.*)$/);
+    if(!m){bad.push(l);return}
+    const y=+m[1]||0,mo=+m[2],d=+m[3];let rest=m[4].trim(),emoji=$("bulkEmo").value;
+    const g=[...seg.segment(rest)][0];
+    if(g&&/^\p{Extended_Pictographic}/u.test(g.segment)){emoji=g.segment;rest=rest.slice(g.segment.length).trim()}
+    const [name,note=""]=rest.split(/[|｜]/).map(x=>x.trim());
+    if(!name||mo<1||mo>12||d<1||d>(lunar?30:31)||(!lunar&&new Date(2000,mo-1,d).getMonth()!=mo-1)){bad.push(l);return}
+    ok.push({owner:user.uid,ownerName:user.displayName||"朋友",name,emoji,note,lunar,y,m:lunar?0:mo-1,d:lunar?1:d,lm:lunar?mo:0,ld:lunar?d:0});
+  });
+  return {ok,bad};
+}
+$("bulkGo").onclick=async()=>{
+  const {ok,bad}=parseBulk($("bulkTxt").value);
+  if(!ok.length){alert("沒有可以匯入的行，請檢查格式");return}
+  if(bad.length&&!confirm("有 "+bad.length+" 行看不懂，會略過：\n"+bad.slice(0,5).join("\n")+"\n\n要匯入其他 "+ok.length+" 筆嗎？"))return;
+  try{
+    const b=writeBatch(db),col=colOf($("bulkTo").value);
+    ok.forEach(r=>b.set(doc(col),r));await b.commit();
+    $("bulkTxt").value="";$("bulk").classList.add("hidden");alert("已匯入 "+ok.length+" 筆");
+  }catch(e){err(e)}
+};
 </script>
 </body>
 </html>
